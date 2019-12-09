@@ -82,7 +82,7 @@ export default class Agenda extends React.Component {
         return (
             <View style={styles.container}>
                 {/* Defini o cabeçalho */}
-                <AddTask isVisible={this.state.showDoneTasks}
+                <AddTask isVisible={this.state.showAddTask}
                     OnSave={this.addTask}
                     OnCancel={() => this.setState({ showAddTask: false })}>
                 </AddTask>

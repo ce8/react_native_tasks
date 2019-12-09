@@ -5,14 +5,13 @@ import {
     View, 
     Text, 
     TextInput, 
-    DataPickerIOS, 
+    DatePickerIOS, 
     StyleSheet, 
     TouchableWithoutFeedback, 
     TouchableOpacity,
     Alert } from 'react-native'
 
 import moment from 'moment'
-import coomonStyles from '../commonStyles'
 import commonStyles from '../commonStyles'
 
 //Inicia o estado com a descricao vazia e com a data atual
@@ -26,9 +25,9 @@ export default class AddTask extends React.Component {
             Alert.alert('Dados Iválidos', 'informe um descrição para a tarefa')
             return
         }
-        const data = {... this.state }
+        const data = {...this.state }
         this.props.onSave(data)
-        this.setState({ ...initialState })
+        this.setState({...initialState })
     }
 
     render () {
@@ -37,14 +36,14 @@ export default class AddTask extends React.Component {
                 visible={this.props.isVisible}
                 animationType='slide' transparent={true}>
                 <TouchableWithoutFeedback onPress={this.props.onCancel}>
-                    <View style={StyleSheet.offset}></View>
+                    <View style={styles.offset}></View>
                 </TouchableWithoutFeedback>
-                <View style={StyleSheet.container}>
-                    <Text style={StyleSheet.header}>Nova Tarefa!</Text>
-                    <TextInput placeholder="Descrição..." style={StyleSheet.input}
+                <View style={styles.container}>
+                    <Text style={styles.header}>Nova Tarefa!</Text>
+                    <TextInput placeholder="Descrição..." style={styles.input}
                         onChangeText={desc => this.setState({ desc })}
                         value={this.state.desc}/>
-                    <DataPickerIOS mode='date' date={this.state.date}
+                    <DatePickerIOS mode='date' date={this.state.date}
                         onDateChange={date => this.setState({ date })}/>
                     <View style={{ flexDirection: 'row', justifyContent: "flex-end"}}>
                         <TouchableOpacity onPress={this.props.onCancel}>
@@ -75,8 +74,7 @@ var styles = StyleSheet.create ({
     button: {
         margin: 20,
         marginRight: 30,
-        color: commonStyles.colors.dafault,
-
+        color: commonStyles.colors.default, 
     },
     header: {
         fontFamily: commonStyles.fontFamily,
