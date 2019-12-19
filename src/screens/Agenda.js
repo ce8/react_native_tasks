@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { StyleSheet, Text, View, ImageBackground, FlatList, TouchableOpacity, Platform } from 'react-native'
+import { StyleSheet, Text, View, ImageBackground, FlatList, TouchableOpacity, Platform, AsyncStorage } from 'react-native'
 import moment from  'moment'
 import 'moment/locale/pt-br'
 import todayImage from  '../../asserts/imgs/today.jpg'
@@ -15,20 +15,23 @@ import AddTask from './AddTask'
 
 export default class Agenda extends React.Component {
     state = {
-        tasks: [
-            {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
-            {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
-            {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
-            {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
-            {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
-            {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
-            {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
-            {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
-            {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
-            {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
-            {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
-            {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
-        ],
+        tasks: [],
+        
+        //Uasado para carregar as task no array
+        // tasks: [
+        //     {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
+        //     {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
+        //     {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
+        //     {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
+        //     {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
+        //     {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
+        //     {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
+        //     {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
+        //     {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
+        //     {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
+        //     {id: Math.random(), desc: 'Compra Curso de React Native', estimateAt: new Date(), doneAt: new Date() },
+        //     {id: Math.random(), desc: 'Criar o APP para Gamorra', estimateAt: new Date(), doneAt: null },
+        // ],
         visibleTasks: [],
         showDoneTasks: true,
         showAddTask: false,
@@ -47,6 +50,11 @@ export default class Agenda extends React.Component {
                  this.filterTasks)
     }
 
+    deleteTask = id => {
+        const tasks = this.state.tasks.filter(task => task.id !== id)
+        this.setState({ tasks }, this.filterTasks)
+    }
+
     filterTasks = () => {
         let visibleTasks = null
         if (this.state.showDoneTasks) {
@@ -56,6 +64,7 @@ export default class Agenda extends React.Component {
             visibleTasks = this.state.tasks.filter(pending)
         }
         this.setState({visibleTasks})
+        AsyncStorage.setItem('tasks', JSON.stringify(this.state.tasks))
     }
 
     toggleFilter = () => {
@@ -63,8 +72,13 @@ export default class Agenda extends React.Component {
 
     }
 
-    componentDidMount =() => {
-        this.filterTasks()
+    componentDidMount = async () => {
+        const data = await AsyncStorage.getItem('tasks')
+        const tasks = JSON.parse(data) || []
+        
+        //depois que o status for modificado chama via call back a funcao filterTasks
+        this.setState({ tasks }, this.filterTasks())
+        
     }
 
     toogleTask = id => {
@@ -83,8 +97,8 @@ export default class Agenda extends React.Component {
             <View style={styles.container}>
                 {/* Defini o cabeçalho */}
                 <AddTask isVisible={this.state.showAddTask}
-                    OnSave={this.addTask}
-                    OnCancel={() => this.setState({ showAddTask: false })}>
+                    onSave={this.addTask}
+                    onCancel={() => this.setState({ showAddTask: false })}>
                 </AddTask>
                 <ImageBackground source={todayImage}
                     style={styles.background}>
@@ -107,7 +121,8 @@ export default class Agenda extends React.Component {
                     <FlatList data={this.state.visibleTasks}
                         keyExtractor={item => `${item.id}` }
                         renderItem={({ item }) => 
-                            <Task {...item} toggleTask={this.toogleTask} /> } />
+                            <Task {...item} onToggleTask={this.toogleTask}
+                                onDelete={this.deleteTask} /> } />
                 </View>
                 <ActionButton buttonColor={commonStyles.colors.today} 
                     onPress={() => { this.setState({ showAddTask: true }) }}>
