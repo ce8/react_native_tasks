@@ -1,5 +1,15 @@
 import React, {Component} from 'react'
-import { StyleSheet, Text, View, ImageBackground, FlatList, TouchableOpacity, Platform, AsyncStorage } from 'react-native'
+import { 
+    StyleSheet, 
+    Text, 
+    View, 
+    ImageBackground, 
+    FlatList, 
+    TouchableOpacity, 
+    Platform,
+    Alert } from 'react-native'
+
+import axios from 'axios'
 import moment from  'moment'
 import 'moment/locale/pt-br'
 import todayImage from  '../../asserts/imgs/today.jpg'
@@ -8,7 +18,7 @@ import Task from '../components/Task'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import ActionButton from 'react-native-action-button'
 import AddTask from './AddTask'
-
+import {server, showError} from '../common'
 
 //Flat List que permitir fazer o scrool das Tasks.
 //Platform é o que diferencia as plataforma como android e IOS
@@ -38,21 +48,40 @@ export default class Agenda extends React.Component {
 
     }
 
-    addTask = task => {
-            const tasks = [...this.state.tasks]
-            tasks.push({
-                id: Math.random(),
+    addTask = async task => {
+        //Alert.alert("Entrou", task.date.toString())
+        try {
+            await axios.post(`${server}/tasks`, {
                 desc: task.desc,
-                estimateAt: task.date,
-                doneAt: null
+                estimateAt: task.date
             })
-            this.setState({ tasks, showAddTask: false },
-                 this.filterTasks)
+            this.setState({ showAddTask: false }, this.loadTasks)
+            
+
+        }catch (err){
+            showError(err)
+        }
+
+            // const tasks = [...this.state.tasks]
+            // tasks.push({
+            //     id: Math.random(),
+            //     desc: task.desc,
+            //     estimateAt: task.date,
+            //     doneAt: null
+            // })
+            // this.setState({ tasks, showAddTask: false },
+            //      this.filterTasks)
     }
 
-    deleteTask = id => {
-        const tasks = this.state.tasks.filter(task => task.id !== id)
-        this.setState({ tasks }, this.filterTasks)
+    deleteTask = async id => {
+        try {
+            await axios.delete(`${server}/tasks/${id}`)
+            await this.loadTasks()
+        } catch (err) {
+            showError(err)
+        }
+        // const tasks = this.state.tasks.filter(task => task.id !== id)
+        // this.setState({ tasks }, this.filterTasks)
     }
 
     filterTasks = () => {
@@ -64,7 +93,7 @@ export default class Agenda extends React.Component {
             visibleTasks = this.state.tasks.filter(pending)
         }
         this.setState({visibleTasks})
-        AsyncStorage.setItem('tasks', JSON.stringify(this.state.tasks))
+        
     }
 
     toggleFilter = () => {
@@ -73,23 +102,28 @@ export default class Agenda extends React.Component {
     }
 
     componentDidMount = async () => {
-        const data = await AsyncStorage.getItem('tasks')
-        const tasks = JSON.parse(data) || []
-        
-        //depois que o status for modificado chama via call back a funcao filterTasks
-        this.setState({ tasks }, this.filterTasks())
-        
+       this.loadTasks()
     }
 
-    toogleTask = id => {
-        const tasks = this.state.tasks.map(task => {
-            if (task.id === id) {
-                task = {...task}
-                task.doneAt = task.doneAt ? null : new Date()
-            }
-            return task
-        })
-        this.setState({ tasks }, this.filterTasks)
+    toogleTask = async id => {
+        try {
+            await axios.put(`${server}/tasks/${id}/toggle`)
+            await this.loadTasks()
+        } catch (err) {
+            showError(err)
+        }
+    }
+
+    loadTasks = async () => {
+       try{
+           const maxDate = moment().format('YYYY-MM-DD 23:59')
+           //const res = await axios.get(`${server}/tasks?date=${maxDate}`)
+           const res = await axios.get(`${server}/tasks`)
+           //console.log(`${server}/tasks?date=${maxDate}`)
+           this.setState({ tasks: res.data }. this.filterTasks)
+       } catch(err) {
+           showError(err)
+       }
     }
 
     render(){
