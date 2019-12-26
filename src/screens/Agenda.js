@@ -10,7 +10,7 @@ import {
     Alert } from 'react-native'
 
 import axios from 'axios'
-import moment from  'moment'
+import moment from 'moment'
 import 'moment/locale/pt-br'
 import todayImage from  '../../asserts/imgs/today.jpg'
 import commonStyles from '../commonStyles'
@@ -56,8 +56,6 @@ export default class Agenda extends React.Component {
                 estimateAt: task.date
             })
             this.setState({ showAddTask: false }, this.loadTasks)
-            
-
         }catch (err){
             showError(err)
         }
@@ -98,14 +96,13 @@ export default class Agenda extends React.Component {
 
     toggleFilter = () => {
         this.setState({ showDoneTasks: !this.state.showDoneTasks }, this.filterTasks)
-
     }
 
     componentDidMount = async () => {
        this.loadTasks()
     }
 
-    toogleTask = async id => {
+    toggleTask = async id => {
         try {
             await axios.put(`${server}/tasks/${id}/toggle`)
             await this.loadTasks()
@@ -117,10 +114,10 @@ export default class Agenda extends React.Component {
     loadTasks = async () => {
        try{
            const maxDate = moment().format('YYYY-MM-DD 23:59')
-           //const res = await axios.get(`${server}/tasks?date=${maxDate}`)
-           const res = await axios.get(`${server}/tasks`)
+           const res = await axios.get(`${server}/tasks?date=${maxDate}`)
+           //const res = await axios.get(`${server}/tasks`)
            //console.log(`${server}/tasks?date=${maxDate}`)
-           this.setState({ tasks: res.data }. this.filterTasks)
+           this.setState({ tasks: res.data }, this.filterTasks)
        } catch(err) {
            showError(err)
        }
@@ -155,7 +152,7 @@ export default class Agenda extends React.Component {
                     <FlatList data={this.state.visibleTasks}
                         keyExtractor={item => `${item.id}` }
                         renderItem={({ item }) => 
-                            <Task {...item} onToggleTask={this.toogleTask}
+                            <Task {...item} onToggleTask={this.toggleTask}
                                 onDelete={this.deleteTask} /> } />
                 </View>
                 <ActionButton buttonColor={commonStyles.colors.today} 
@@ -201,6 +198,4 @@ const styles = StyleSheet.create ({
         flexDirection: 'row',
         justifyContent: 'flex-end',
     }
-
-   
 })
