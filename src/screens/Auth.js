@@ -10,7 +10,7 @@ import {
 import axios from 'axios'
 import { server, showError } from '../common'
 import commonStyles from '../commonStyles'
-import backgroundImage from '../../asserts/imgs/login.jpg'
+import backgroundImage from '../../assets/imgs/login.jpg'
 //import { thisExpression } from '@babel/types'
 import AuthInput from '../components/AuthInput'
 
@@ -29,7 +29,7 @@ export default class Auth extends React.Component {
                 email: this.state.email,
                 password: this.state.password
             })
-            axios.defaults.headers.common['Autorization'] = `bearer ${res.data.token}`
+            axios.defaults.headers.common['Authorization'] = `bearer ${res.data.token}`
             this.props.navigation.navigate('Home')
         } catch (err) {
             Alert.alert('Erro', 'Falha no Login')
@@ -74,17 +74,17 @@ export default class Auth extends React.Component {
 
 
     render () {
-        const validation =[]
+        const validations =[]
 
-        validation.push(this.state.email && this.state.email.includes('@'))
-        validation.push(this.state.password && this.state.password.length >= 4)
+        validations.push(this.state.email && this.state.email.includes('@'))
+        validations.push(this.state.password && this.state.password.length >= 4)
 
         if(this.state.stageNew){
-            validation.push(this.state.name && this.state.name.trim())
-            validation.push(this.state.confirmPassword)
-            validation.push(this.state.password === this.state.confirmPassword)
+            validations.push(this.state.name && this.state.name.trim())
+            validations.push(this.state.confirmPassword)
+            validations.push(this.state.password === this.state.confirmPassword)
         }
-        const validForm = validation.reduce((all, v) => all && v)
+        const validForm = validations.reduce((all, v) => all && v)
 
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>

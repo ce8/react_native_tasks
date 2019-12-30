@@ -12,7 +12,7 @@ import {
 import axios from 'axios'
 import moment from 'moment'
 import 'moment/locale/pt-br'
-import todayImage from  '../../asserts/imgs/today.jpg'
+import todayImage from  '../../assets/imgs/today.jpg'
 import commonStyles from '../commonStyles'
 import Task from '../components/Task'
 import Icon from 'react-native-vector-icons/FontAwesome'
