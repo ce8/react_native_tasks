@@ -1,9 +1,7 @@
 import React from 'react'
 import { 
     createSwitchNavigator, 
-    createAppContainer, 
     createDrawerNavigator } from 'react-navigation'
-//import { createDrawerNavigator } from 'react-navigation-drawer'; 
 import Agenda from './screens/Agenda'
 import Auth from './screens/Auth'
 import commonStyles from './commonStyles'
@@ -33,7 +31,7 @@ const MenuRoutes = {
 
     Month: {
         name: 'Month',
-        screen: props => <Agenda title='Mês' daysAhead={1} {...props }/>,
+        screen: props => <Agenda title='Mês' daysAhead={30} {...props }/>,
         navigationOptions: {
             title: 'Mês'
         }
@@ -71,5 +69,5 @@ const MainNavigator = createSwitchNavigator(MainRoutes, {
      initialRouteName: 'Auth' 
 })
 
-export default createAppContainer(MainNavigator)
+export default MainNavigator
                              
