@@ -2,9 +2,12 @@ import React from 'react'
 import { 
     createSwitchNavigator, 
     createDrawerNavigator } from 'react-navigation'
+import Menu from './screens/Menu'
 import Agenda from './screens/Agenda'
 import Auth from './screens/Auth'
 import commonStyles from './commonStyles'
+import AuthOrApp from './screens/AuthOrApp'
+ 
 
 const MenuRoutes = {
     Today: {
@@ -40,6 +43,7 @@ const MenuRoutes = {
 
 const MenuConfig = {
     initialRouteName: 'Today',
+    contentComponent: Menu,
     contentOptions: {
         labelStyle: {
             fontFamily: commonStyles.fontFamily,
@@ -55,6 +59,10 @@ const MenuConfig = {
 const MenuNavigator = createDrawerNavigator(MenuRoutes, MenuConfig)
 
 const MainRoutes = {
+    Loading: {
+        name: 'Loading',
+        screen: AuthOrApp
+    },
     Auth: {
         name: 'Auth',
         screen: Auth
@@ -65,8 +73,9 @@ const MainRoutes = {
     }
 }
 
+// Define a primeira tela executada ou mostrada pelo App
 const MainNavigator = createSwitchNavigator(MainRoutes, {
-     initialRouteName: 'Auth' 
+     initialRouteName: 'Loading' 
 })
 
 export default MainNavigator
