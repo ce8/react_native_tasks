@@ -58,7 +58,18 @@ export default class AddTask extends React.Component {
                 }
             })
         }
-
+    
+    TesteID = id =>  {
+        console.warn('AddTask - TesteID', id.toString())
+        this.setState({desc: id.toString()})
+        const dateX = new Date('2020-09-10T14:00:00')
+        console.warn('dateX:', dateX)
+        this.setState({date: dateX})
+        
+        //2018-06-27T18:30:00.000Z
+        //var yourDate = new Date(yourString);
+        
+    }
 
     render () {
         let datePicker = null
@@ -79,7 +90,9 @@ export default class AddTask extends React.Component {
             <Modal onRequestClose={this.props.onCancel}
                 visible={this.props.isVisible}
                 animationType='slide' transparent={true}
-                onShow={() => this.setState({ ...this.getInitialState() })}>
+                // onShow={() => this.setState({ ...this.getInitialState() })}>
+                // onShow={() => Alert.alert(this.props.OnTeste)}>
+                onShow={() => this.TesteID(this.props.OnTeste)}>
                 <TouchableWithoutFeedback onPress={this.props.onCancel}>
                     <View style={styles.offset}></View>
                 </TouchableWithoutFeedback>

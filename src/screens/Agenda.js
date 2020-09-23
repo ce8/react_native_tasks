@@ -48,6 +48,7 @@ export default class Agenda extends React.Component {
         visibleTasks: [],
         showDoneTasks: true,
         showAddTask: false,
+        IdTaskClicked: ''
 
     }
 
@@ -107,11 +108,34 @@ export default class Agenda extends React.Component {
 
     toggleTask = async id => {
         try {
+            console.warn('Entrou no Tougle do Agenda.js')
             await axios.put(`${server}/tasks/${id}/toggle`)
             await this.loadTasks()
         } catch (err) {
             showError(err)
         }
+    }
+    //Usado para exemplo
+    
+    TesteID = id =>  {
+         console.warn('Chamou a Função Agenda.JS - TesteID', id.toString())
+         this.setState({IdTaskClicked: id.toString()})
+         this.setState({ showAddTask: true })
+         //console.warn('Entrou? TesteID: ', this.state.IdTaskClicked)
+         
+        
+    }
+    TesteDESC = desc =>  {
+        console.warn('Chamou a Função Agenda.JS - TesteDESC', desc.toString())
+        //Alert.alert('Chamou a Função Agenda.JS - Testex', id.toString())
+        //this.setState({ showAddTask: true })
+        //console.warn('Agenda.JS - Testex - Status ShowAddTask', this.state.showAddTask)
+        //console.warn('Agenda.JS - Testex - Title: ',)
+  
+    }
+
+    Testey = () =>  {
+        Alert.alert('Chamou a Função Agenda.JS - Testex', id.toString())
     }
 
     loadTasks = async () => {
@@ -121,6 +145,7 @@ export default class Agenda extends React.Component {
            //const res = await axios.get(`${server}/tasks`)
            //console.log(`${server}/tasks?date=${maxDate}`)
            this.setState({ tasks: res.data }, this.filterTasks)
+
        } catch(err) {
            showError(err)
        }
@@ -149,11 +174,13 @@ export default class Agenda extends React.Component {
                 break
         }
 
+        
         return (
             <View style={styles.container}>
                 {/* Defini o cabeçalho */}
                 <AddTask isVisible={this.state.showAddTask}
                     onSave={this.addTask}
+                    OnTeste={this.state.IdTaskClicked}
                     onCancel={() => this.setState({ showAddTask: false })}>
                 </AddTask>
                 <ImageBackground source={image}
@@ -181,7 +208,7 @@ export default class Agenda extends React.Component {
                         keyExtractor={item => `${item.id}` }
                         renderItem={({ item }) => 
                             <Task {...item} onToggleTask={this.toggleTask}
-                                onDelete={this.deleteTask} /> } />
+                                onDelete={this.deleteTask} OnTeste={this.TesteID} /> } />
                 </View>
                 <ActionButton buttonColor={styleColor} 
                     onPress={() => { this.setState({ showAddTask: true }) }}>

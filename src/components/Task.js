@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native'
+import {StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, Alert } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
 import 'moment/locale/pt-br'
@@ -46,16 +46,20 @@ export default props => {
             onLeftActionActivate={() => props.onDelete(props.id)}
             leftContent={leftContent} rightButtons={rightContent}>
             <View style={styles.container}>
-                <TouchableWithoutFeedback onPress={() => props.onToggleTask(props.id)}>
+                <TouchableWithoutFeedback onPress={() => props.onToggleTask(props.id)} >
                     <View style={styles.checkContainer}>{check}</View>
                 </TouchableWithoutFeedback>
                 <View>
+                <TouchableWithoutFeedback onPress={() => props.OnTeste(props.id)}>
+                {/* <TouchableWithoutFeedback onPress={() => Alert.alert('teste', props.id.toString())}> */}
                     <Text style={[styles.description, descStyle]}>
                         {props.desc}
                     </Text>
+                </TouchableWithoutFeedback>
                     <Text style={styles.date}>
                         {moment(props.estimateAt).locale('pt-br').format('ddd, D [de] MMMM [de] YYYY')}
                     </Text>
+                
                 </View>
             </View>
         </Swipeable>
